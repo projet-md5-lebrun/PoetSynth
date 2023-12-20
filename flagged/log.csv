@@ -1,0 +1,2 @@
+message,Choose a theme,Choose syllable count,output,flag,username,timestamp
+,Theme2,5,Generated poem for: Crée un poème en français sur le thème Theme2 de préférence en 5 syllabes. <s>[INST] previous_user_input [/INST] previous_bot_response</s> [INST]  [/INST],,,2023-12-24 11:40:16.910134
