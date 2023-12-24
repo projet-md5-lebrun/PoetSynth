@@ -16,11 +16,7 @@ Les LLM nécessitent moins de puissance de calcul que les réseaux de neurones r
 
 Les LLM sont plus faciles à entraîner que les réseaux de neurones récurrents. Cela est dû au fait que les LLM sont capables d'apprendre des relations entre les mots à long terme sans avoir besoin de mécanismes complexes tels que les portes de mémoire. 'Memory gates'
 
-**Sources**
 
-* A Comparison of Neural Machine Translation Models: [https://arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762)
-* Attention Is All You Need: [https://arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762)
-* Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context: [https://arxiv.org/abs/1901.11117](https://arxiv.org/abs/1901.11117)
 
 **Inconvénients des réseaux de neurones récurrents**
 
@@ -35,12 +31,6 @@ Les réseaux de neurones récurrents nécessitent plus de puissance de calcul qu
 **Difficulté d'entraînement**
 
 Les réseaux de neurones récurrents sont plus difficiles à entraîner que les LLM. Cela est dû au fait que les réseaux de neurones récurrents doivent apprendre des relations entre les mots à long terme, ce qui peut entraîner des problèmes de divergence.
-
-**Sources**
-
-* A Comparison of Neural Machine Translation Models: [https://arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762)
-* Attention Is All You Need: [https://arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762)
-* Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context: [https://arxiv.org/abs/1901.11117](https://arxiv.org/abs/1901.11117)
 
 **Coût du compute**
 
