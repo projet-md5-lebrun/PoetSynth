@@ -1,4 +1,5 @@
 import streamlit as st
+
 import sqlite3
 import pandas as pd
 import shutil
@@ -155,3 +156,4 @@ poem_generator = PoemGenerator(db_manager=db_manager, client=client)
 
 # Run the Streamlit app
 poem_generator.run_streamlit_app()
+
