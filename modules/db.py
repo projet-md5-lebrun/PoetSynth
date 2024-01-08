@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 import shutil
 import os
+import streamlit as st
  
 class DatabaseManager:
     def __init__(self, db_file, data_dir, src_db_file):
@@ -68,8 +69,16 @@ class DatabaseManager:
         cursor.execute("INSERT INTO poem(theme, nb_syllable, style, poem) VALUES(?,?,?,?)", (theme, nb_syllable, style, poem))
         db.commit()
         poem_df, total_poem = self.get_latest_poems()
+        
         db.close()
         return poem_df, total_poem
+    
+    def clear_database(self):
+        db = sqlite3.connect(self.DB_FILE)
+        cursor = db.cursor()
+        cursor.execute("DELETE FROM poem")
+        db.commit()
+        db.close()
 
     def load_data(self):
         db = sqlite3.connect(self.DB_FILE)
