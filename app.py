@@ -1,17 +1,17 @@
 import streamlit as st
 from modules.db import DatabaseManager
 from modules.generator import PoemGenerator
+st.set_page_config(
+    page_title="Générateur de Poèmes",
+    page_icon="✨",
+    layout="wide"
+)
 
 # Instantiate DatabaseManager and PoemGenerator
 db_manager = DatabaseManager(db_file="./db/poem.db", data_dir="./data/db", src_db_file="poem.db")
 poem_generator = PoemGenerator(db_manager=db_manager, client=None)
 
 # Streamlit UI setup
-st.set_page_config(
-    page_title="Générateur de Poèmes",
-    page_icon="✨",
-    layout="wide"
-)
 
 # Title
 st.title("Générateur de Poèmes - Explorez l'Art de la Création Poétique")
