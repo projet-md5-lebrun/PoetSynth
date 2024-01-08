@@ -1,86 +1,8 @@
 import streamlit as st
-import sqlite3
-import pandas as pd
-import shutil
-from huggingface_hub import InferenceClient
-import os
-
-class DatabaseManager:
-    def __init__(self, db_file, data_dir, src_db_file):
-        self.DB_FILE = db_file
-        self.DATA_DIR = data_dir
-        self.SRC_DB_FILE = os.path.join(self.DATA_DIR, "poem.db")
-        os.makedirs(self.DATA_DIR, exist_ok=True)
-        os.makedirs(os.path.dirname(self.DB_FILE), exist_ok=True)
-        self._initialize_database()
-
-    def _initialize_database(self):
-        try:
-            shutil.copyfile(self.SRC_DB_FILE, self.DB_FILE)
-        except FileNotFoundError as e:
-            st.warning(f"The source file {self.SRC_DB_FILE} does not exist: {e}")
-        except Exception as e:
-            st.warning(f"An error occurred while copying the database file: {e}")
-
-        db = sqlite3.connect(self.DB_FILE)
-        try:
-            db.execute("SELECT * FROM poem").fetchall()
-        except sqlite3.OperationalError:
-            try:
-                db.execute(
-                    '''
-                    CREATE TABLE IF NOT EXISTS poem (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                        theme TEXT,
-                        nb_syllable INTEGER,
-                        style TEXT,
-                        poem TEXT
-                    )
-                    '''
-                )
-                db.commit()
-            except Exception as e:
-                st.warning(f"An error occurred while creating the table: {e}")
-            finally:
-                db.close()
-
-    def backup_db(self):
-        shutil.copyfile(self.DB_FILE, self.SRC_DB_FILE)
-        db = sqlite3.connect(self.DB_FILE)
-        poem = db.execute("SELECT * FROM poem").fetchall()
-        pd.DataFrame(poem).to_csv(os.path.join(self.DATA_DIR, "poem.csv"), index=False)
-        print("Updating the database")
-        db.close()
-
-    def get_latest_poems(self):
-        db = sqlite3.connect(self.DB_FILE)
-        cursor = db.cursor()
-        cursor.execute("SELECT id, created_at, theme, nb_syllable, style, poem FROM poem ORDER BY id DESC limit 10")
-        poem = cursor.fetchall()
-        total_poem = cursor.execute("SELECT COUNT(id) FROM poem").fetchone()[0]
-        columns = ["id", "created_at", "theme", "nb_syllable", "style", "poem"]
-        poem_df = pd.DataFrame(poem, columns=columns)
-        db.close()
-        return poem_df, total_poem
-
-    def add_poem(self, theme, nb_syllable, style, poem):
-        db = sqlite3.connect(self.DB_FILE)
-        cursor = db.cursor()
-        cursor.execute("INSERT INTO poem(theme, nb_syllable, style, poem) VALUES(?,?,?,?)", (theme, nb_syllable, style, poem))
-        db.commit()
-        poem_df, total_poem = self.get_latest_poems()
-        db.close()
-        return poem_df, total_poem
-
-    def load_data(self):
-        db = sqlite3.connect(self.DB_FILE)
-        poem_df, total_poem = self.get_latest_poems()
-        db.close()
-        return poem_df, total_poem
-
-
-class PoemGenerator:
+#from huggingface_hub import InferenceClient
+from modules.db import DatabaseManager
+import modules.geneator import ...
+"""class PoemGenerator:
     def __init__(self, db_manager, client):
         self.db_manager = db_manager
         self.client = client
@@ -118,16 +40,25 @@ class PoemGenerator:
             output += response.token.text
 
         return output
+"""
+# Instantiate DatabaseManager and PoemGenerator
+db_manager = DatabaseManager(db_file="./db/poem.db", data_dir="./data/db", src_db_file="poem.db")
+client = InferenceClient("mistralai/Mixtral-8x7B-Instruct-v0.1")
+poem_generator = PoemGenerator(db_manager=db_manager, client=client)
+
+
+# Define the Streamlit app
+# New front design for the app 
 
     def run_streamlit_app(self):
         # Streamlit UI setup
         st.title("Poem Generator")
 
         # Create form components for theme, syllables, and style
-        theme = st.text_input("Choose the theme", "Nature")
+        theme = st.text_input("Choisir un théme", "Nature, amour, temps, ...")
         nb_syllabes = st.radio("Number of syllables", [6, 8, 10, 12])
         style = st.radio("In the style of", ["Andrée Chedid", "Charlotte Delbo", "Arthur Rimbaud", "Louis Aragon"])
-        submit = st.button("Generate Poem")
+        submit = st.button("Création du poème")
 
         # Handle form submission
         if submit:
@@ -147,10 +78,6 @@ class PoemGenerator:
         st.dataframe(data)
         st.download_button("Download Data as CSV", data.to_csv(), "poem.csv", "text/csv")
 
-# Instantiate DatabaseManager and PoemGenerator
-db_manager = DatabaseManager(db_file="./db/poem.db", data_dir="./data/db", src_db_file="poem.db")
-client = InferenceClient("mistralai/Mixtral-8x7B-Instruct-v0.1")
-poem_generator = PoemGenerator(db_manager=db_manager, client=client)
 
 # Run the Streamlit app
 poem_generator.run_streamlit_app()
